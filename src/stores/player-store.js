@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
 import { LocalStorage } from 'quasar'
-import { matHourglassFull } from '@quasar/extras/material-icons';
+
 export const usePlayerStore = defineStore('player', () => {
   
   const numPlayers = ref(3);
@@ -9,6 +9,7 @@ export const usePlayerStore = defineStore('player', () => {
   const monarch_id = ref(0);
   const init_id = ref(0);
   const life = ref(40);
+  
   const defaultPlayers = [
     {
       id: 1,
@@ -200,6 +201,7 @@ export const usePlayerStore = defineStore('player', () => {
       })
     })
   }
+
 
   return { 
     players,

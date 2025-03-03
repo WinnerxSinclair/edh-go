@@ -3,7 +3,7 @@
     <div
       v-for="(player,index) in playerStore.actualPlayers" :key="index"
       class="grid-50-50 rel secondary "
-      :class="useGetClass(index, playerStore.layout)"
+      :class="[useGetClass(index, playerStore.layout), {'chosen': index === chosenPlayer}]"
       :style="[
                {background: player.background},
                {color: player.text_color},
@@ -86,7 +86,7 @@
     <TheProfile v-if="profile_open !== null" :propIndex="profile_open" @save="profile_open = null" />
     
     <TheModal v-if="settings_open" @closeModal="settings_open = false">
-      <TheSettings />
+      <TheSettings @choose="chooseRandomPlayer" />
     </TheModal>
 
   </div>
@@ -173,13 +173,29 @@ function xd(i) {
     timers[i] = null; // Reset the timer for this player
   }, 2000);
 }
+
+
+const chosenPlayer = ref(null);
+function chooseRandomPlayer(){
+  settings_open.value = false;
+  chosenPlayer.value = Math.floor((Math.random() * playerStore.actualPlayers.length));
+  setTimeout(() => {
+    chosenPlayer.value = null;
+  }, 3000)
+}
 </script>
 
 <style lang="scss" scoped>
+.chosen{
+  animation: flash 1s ease-in-out 3;
+}
+@keyframes flash{
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.25); }
+}
 .status{
   position:absolute;
   display:flex;
-  
 }
 .settings{
   width: 15px;
