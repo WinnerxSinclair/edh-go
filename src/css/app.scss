@@ -44,7 +44,7 @@
   flex-direction: column;
 }
 .hp{
-  font-size: $health;
+  font-size: 4.5rem;
 }
 .rel{
   position:relative;
@@ -103,7 +103,9 @@
 .fs-500{
   font-size: 1.5rem;
 }
-
+.fs-600{
+  font-size: 2rem;
+}
 .lay{
   height: 100vh;
 }

@@ -13,11 +13,7 @@
       <div 
         class="fs-200 names" 
         @click="profile_open = index" 
-        :style="[{'text-shadow': 'none'},
-                 {background: player.text_color === 'white' ? 'black' : 'white'}
-        ]"
       >
-      
         {{player.name}}
         
       </div>
@@ -25,10 +21,10 @@
         <img class="life-icon minus-life" src="../assets/minus.svg" alt="">
       </div>
       
-      <div class="abs-center">
-        <div class="hp" :class="{'ts': player.text_shadow}">{{ player.life }}</div>
-      </div>
-      <div class="grid-c" @pointerdown="resetDelay(index, addLife)" @pointerup="stopIncrement(index)" @pointerleave="stopIncrement(index)">
+      
+      <div class="abs-center pe-none" :style="hpSize(player.life)">{{ player.life }}</div>
+      
+      <div class="grid-c" @touchstart="resetDelay(index, addLife)" @touchend="stopIncrement(index)" >
         <img class="life-icon plus-life " src="../assets/plus.svg" alt="">
       </div>
       
@@ -41,23 +37,24 @@
       </div>
 
 
-      <button class="options-btn" @click="counters_open = index" v-if="Object.keys(playerStore.players[index].counters).length === 0"></button>
+      <!-- <button class="options-btn" @click="counters_open = index" v-if="Object.keys(playerStore.players[index].counters).length === 0"></button> -->
 
-      <div class="box" @click="counters_open = index" v-else>
-        <template v-for="(val, key) in playerStore.players[index].counters">
-          <div class="test-grid" v-if="val > 0">
-            <img class="icon" :src="counters[key]" alt="">
-            <div class="counters bold">{{ val }}</div>
-          </div>
-        </template>
+      <div class="bot-container pe-none" >
+        <div></div>
+        <CommanderDamage  
+          class="cmd-dmg" :propIndex="index" @click="cmd_dmg_open = index" 
+        />
+        <div class="box" @click="counters_open = index" v-if="Object.keys(playerStore.players[index].counters).length !== 0">
+          <template v-for="(val, key) in playerStore.players[index].counters">
+            <div class="test-grid" v-if="val > 0">
+              <img class="icon" :src="counters[key]" alt="">
+              <div class="counters bold">{{ val }}</div>
+            </div>
+          </template>
+        </div>
       </div>
 
-      <CommanderDamage 
-        :style="[{'text-shadow': 'none'},
-                 {background: playerStore.actualPlayers[index].text_color === 'white' ? 'black' : 'white'}
-                ]" 
-        class="cmd-dmg" :propIndex="index" @click="cmd_dmg_open = index" 
-      />
+
       <div 
         class="settings" 
         :style="useSettingsIcon(playerStore.layout)" 
@@ -79,9 +76,9 @@
       <RealCmdDmg :propIndex="cmd_dmg_open" />
     </TheModal>
 
-    <TheModal v-if="counters_open !== null" @closeModal="counters_open = null">
-      <TheCounters :propIndex="counters_open" />
-    </TheModal>
+    
+    <TheCounters v-if="counters_open !== null" :propIndex="counters_open" @closeCounters="counters_open = null" />
+    
 
     <TheProfile v-if="profile_open !== null" :propIndex="profile_open" @save="profile_open = null" />
     
@@ -93,7 +90,7 @@
 </template>
 
 <script setup>
-import {ref, computed} from 'vue'
+import {ref, computed, onMounted} from 'vue'
 import { usePlayerStore } from 'src/stores/player-store';
 import { useGetClass }  from 'src/use/useGetClass'
 import { useSettingsIcon } from 'src/use/useGetStyle'
@@ -140,10 +137,16 @@ function startAcceleration(i, func){
 }
 
 function resetDelay(i, func){
+  if (ramp_timers[i] !== null) return;
   current_delays[i] = 350;
   startAcceleration(i, func);
 }
 
+function hpSize(hp){
+  let str = String(hp);
+  let max = Math.min(4.5, 9/(str.length-1))
+  return { 'font-size': `${max}rem` };
+}
 function stopIncrement(i) {
   clearTimeout(ramp_timers[i])
   ramp_timers[i] = null;
@@ -178,14 +181,23 @@ function xd(i) {
 const chosenPlayer = ref(null);
 function chooseRandomPlayer(){
   settings_open.value = false;
+  if(chosenPlayer.value !== null) return;
   chosenPlayer.value = Math.floor((Math.random() * playerStore.actualPlayers.length));
   setTimeout(() => {
     chosenPlayer.value = null;
   }, 3000)
 }
+
+// onMounted(() => {
+//   document.addEventListener("contextmenu", (event) => event.preventDefault());
+// });
 </script>
 
 <style lang="scss" scoped>
+
+.left-spacer{
+  flex: 1 1 auto;
+}
 .chosen{
   animation: flash 1s ease-in-out 3;
 }
@@ -198,7 +210,7 @@ function chooseRandomPlayer(){
   display:flex;
 }
 .settings{
-  width: 15px;
+  width: 22px;
   aspect-ratio: 1;
   position:absolute;
   border-radius: 50%;
@@ -218,15 +230,13 @@ function chooseRandomPlayer(){
   position:absolute;
   background:white;
   display:block;
-  width: 10px;
+  width: 15px;
   aspect-ratio: 1;
   cursor:pointer;
   border:none;
   border-radius: 50%;
 }
-.cmd-dmg{
-  position:absolute;
-}
+
 .test-grid{
   display:flex;
   flex-direction: column;
@@ -243,19 +253,33 @@ function chooseRandomPlayer(){
 }
 
 .box{
-  position:absolute;
+  flex: 0 0 auto;
   display:flex;
   gap: .1rem;
   font-size:calc(.6rem + 1vmin);
   border-radius: 1rem;
   background:white;
+  pointer-events: auto;
 }
 .counter{
-  font-size: .9rem;
+  font-size: 1.1rem;
   white-space: nowrap;
   z-index: 500;
 }
+
+.cmd-dmg{
+  pointer-events: auto;
+}
 .hor-text{
+  .bot-container{
+    position:absolute;
+    bottom:0;
+    height: 25%;
+    width: 100%;
+    display:grid;
+    grid-template-columns: 1fr 27% 1fr;
+
+  }
   .names{
     background:white;
     padding: 0 1rem;
@@ -273,28 +297,28 @@ function chooseRandomPlayer(){
   .box{
     bottom:2px;
     right:5%;
-    height:min(25%, 70px);;
+    height: min(100%, 60px);
     padding: .1rem 3%;
-
+    justify-self: end;
     .test-grid{
       width: 20px;
     }
     .icon{
-      height:50%;
+      min-height: 20px;
+      max-height: 20px;
       min-width:15px;
       max-width:100%;
     }
   }
   .cmd-dmg{
-    height:30%;
-    width:30%;
-    left: 5%;
+    width: 100%;
+    height:100%;
+    
     bottom:2px;
   }
   .options-btn{
-    bottom: 5px;
-    left: 50%;
-    transform: translate(-50%, 0);
+    bottom: 10px;
+    right: 15px;
   }
   .plus-life{
     margin-left:50%;
@@ -312,8 +336,18 @@ function chooseRandomPlayer(){
   }
 }
 
+
 //vertical
 .vertical-text{
+  .bot-container{
+    position:absolute;
+    left:0;
+    width: 25%;
+    height: 100%;
+    display:grid;
+    grid-template-columns: 1fr 27% 1fr;
+
+  }
   .names{
     background:white;
     padding: 1rem 0;
@@ -329,9 +363,8 @@ function chooseRandomPlayer(){
     transform: translate(0, -50%);
   }
   .box{
-    left:2px;
-    bottom:5%;
-    width: min(25%, 70px);
+    justify-self: end;
+    width: min(100%, 60px);
     padding: 3% .1rem;
 
     .test-grid{
@@ -346,19 +379,13 @@ function chooseRandomPlayer(){
     }
   }
   .cmd-dmg{
-    height:30%;
-    width:30%;
-    top: 5%;
-    left:2px;
-
-    &.six-alt-1, &.five-1, &.six-1, &.five-alt-1{
-      height: 42%;
-      top: 2%;
-    }
+    justify-self: center;
+    width:100%;
+    height: 100%;
   }
   .options-btn{
     left: 5px;
-    top: 50%;
+    top: 5%;
     transform: translate(0, -50%);
   }
   .life-icon{
@@ -379,6 +406,14 @@ function chooseRandomPlayer(){
     bottom: 0;
     img{
       transform: rotate(90deg);
+    }
+  }
+}
+
+.five, .five-alt, .six, .six-alt{
+  .vertical-text{
+    .bot-container{
+      grid-template-columns: 1fr 35% 1fr;
     }
   }
 }

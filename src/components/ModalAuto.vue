@@ -6,7 +6,6 @@
   </div>
 </template>
 
-
 <style lang="scss" scoped>
 .outer{
   inset: 0;
@@ -18,9 +17,9 @@
   align-items: center;
   z-index: 998;
 }
-
 .inner{
-  width: 90%;
-  height: 85%;
+  display:flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

@@ -1,11 +1,11 @@
 <template>
   <div class="outer" @click="updateProfile">
-    <div class="inner" @click.stop>
-      <div class="container flex ac column">
-        <div class="flex column gap">
-          <input class="text-center " type="text" v-model="form.name">
+    <div class="inner" @click.stop :class="useCounterClass(propIndex, playerStore.layout)">
+      <div class="container flex column" >
+        <div class="flex ac column gap">
+          <input class="text-center name-change" type="text" v-model="form.name">
 
-          <div class="flex gap wrap">
+          <div class="flex jc gap wrap colors">
             <button 
               v-for="color in color_ops" :key="color"
               class="color-btn"
@@ -16,7 +16,7 @@
             </button>
           </div>
 
-          <div>----Text Color----</div>
+          <!-- <div>----Text Color----</div>
           <div class="flex-c-c gap">
             <button v-for="op in options.tc" :key="op" @click="form.tc = op" :class="{'btn-bg': form.tc === op}">{{ op }}</button>
           </div>
@@ -27,7 +27,52 @@
           </div>
 
           <button @click="updateProfile">Save</button>
-          <button @click="$emit('save')">Cancel</button>
+          <button @click="$emit('save')">Cancel</button> -->
+
+
+
+          <div class="flex jc gap">
+        <button class="counter-btn"
+          :class="{'selected-light': playerStore.monarch_id === playerStore.players[propIndex].id }" 
+          @click="playerStore.monarch_id = playerStore.monarch_id === playerStore.players[propIndex].id ? 0 : playerStore.players[propIndex].id"
+        >
+          <img src="../assets/crown.png" alt="" >
+          <div class="label">Monarch</div>
+        </button>
+        <button class="counter-btn">
+          <img src="../assets/ascend.png" alt="">
+          <div class="label">Ascend</div>
+        </button>
+        <button class="counter-btn"
+          :class="{'selected-light': playerStore.init_id === playerStore.players[propIndex].id }" 
+          @click="playerStore.init_id = playerStore.init_id === playerStore.players[propIndex].id ? 0 : playerStore.players[propIndex].id"
+        >
+          <img src="../assets/initiative.png" alt="">
+          <div class="label">Initiative</div>
+        </button>
+      </div>
+      <br>
+      <div class="flex jc gap">
+
+        <div 
+          class="counter-grid bold rel"
+          :class="{'selected-light': playerStore.players[propIndex].counters[key] }" 
+          v-for="(val, key) in counters" :key="key"
+        >
+          <img class="smol minus" src="../assets/minus.svg" alt="">
+          <div class="test">
+            <img class="smol-2" :src="val" alt="">
+            <div class="fs-100">{{ key }}</div>
+            <div class="fs-100 num">{{ playerStore.players[propIndex].counters[key] || 0 }}</div>
+          </div>
+          <img class="smol plus" src="../assets/plus.svg" alt="">
+          <div class="overlay">
+            <button @click="minusCounter(key)"></button>
+            <button @click="addCounter(key)"></button>
+          </div>
+        </div>
+        
+      </div>
         </div> 
       </div>
     </div>
@@ -37,9 +82,16 @@
 
 
 <script setup>
+import poisonIcon from '../assets/poison.svg'
+import taxIcon from '../assets/coin.png'
+import treasureIcon from '../assets/treasure.png'
+import radIcon from '../assets/rad.png'
+import expIcon from '../assets/exp.png'
+import energyIcon from '../assets/energy.png'
+import speedIcon from '../assets/speed.png'
 import { usePlayerStore } from 'src/stores/player-store';
 import { ref } from 'vue'
-
+import { useCounterClass } from 'src/use/useGetClass';
 const playerStore = usePlayerStore();
 const props = defineProps({
   propIndex: {
@@ -47,7 +99,21 @@ const props = defineProps({
     required: true
   }
 });
-
+const counters = { 
+  'Poison': poisonIcon,
+  'Tax': taxIcon,
+  'Treasure': treasureIcon,
+  'Rad': radIcon,
+  'Exp': expIcon,
+  'Energy': energyIcon,
+  'Speed': speedIcon  
+}
+function addCounter(key){
+  playerStore.addCounter(key, props.propIndex);
+}
+function minusCounter(key){
+  playerStore.minusCounter(key, props.propIndex);
+}
 const emit = defineEmits(['save'])
 const options = {
   bg: ['Color'],
@@ -70,15 +136,43 @@ function updateProfile(){
   emit('save');
 }
 
-
 </script>
+
 <style lang="scss" scoped>
+.overlay{
+  position:absolute;
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  inset:0;
+  button{
+    background:transparent;
+    transition: background 0.1s ease-in-out;
+  }
+  button:active{
+    background:rgba(166, 166, 255, 0.664);
+  }
+}
+.counter-grid{
+  display:grid;
+  grid-template-columns: 1fr 5fr 1fr;
+  background: rgb(247, 247, 247);
+  border-radius: .2rem;
+}
+
+.colors{
+  padding: 1rem;
+}
+
+.name-change{
+  padding: .2rem;
+  font-size: 1rem;
+}
 .color-btn{
   width: 40px;
   aspect-ratio: 1;
 }
 .selected-border{
-  box-shadow: 0 0 0 1px black;
+  box-shadow: 0 0 0 2px black;
 }
 .my-picker{
   max-width: 25px;
@@ -86,15 +180,15 @@ function updateProfile(){
 }
 .container{
   width: 100%;
-  height: 100%;
-  background:white;
+  background:rgb(220, 238, 252);
   text-align: center;
   border-radius: 1rem;
-  padding:1rem;
   gap: 1rem;
   flex-wrap: nowrap;
   overflow:auto;
 }
+
+
 input{
   border: 1px solid black;
   border-radius: .1rem;
@@ -103,10 +197,7 @@ input:focus{
   border: 2px solid black;
   outline: none;
 }
-button{
-  border-radius: .1rem;
-  padding: .1em 1em;
-}
+
 .card-img{
   width: 60px;
 }
@@ -122,15 +213,99 @@ button{
   z-index: 998;
 }
 .inner{
-  width: 90%;
-  height:85%;
+  display:flex;
+  align-items:center;
 }
 
 .back-btn{
   position:absolute;
   top: 1rem;
   left:1rem;
-  
+}
+
+.hor-text{
+  &.inner{
+    width: 90%;
+  }
+  .container{
+    padding:1rem 1rem 2rem 1rem;
+  }
+
+  .counter-grid{
+    width: 30%;
+    max-width: 70px;
+    height: 60px;
+  }
+  .num{
+    margin-top:.4rem;
+  }
+  .dynamic-mt{
+    margin-top: 1rem;
+  }
+}
+
+.vertical-text {
+  writing-mode: vertical-rl;
+  &.inner{
+    max-height: 90%;
+  }
+  .container{
+    padding-left: 1rem;
+    padding-right: 1rem; 
+  }
+  .name-change{
+    height: 60%;
+  }
+
+  .counter-grid{
+    height: 30%;
+    max-height: 60px;
+    width: 60px;
+  }
+  img{
+    transform:rotate(90deg);
+  }
+  .num{
+    margin-right: .4rem;
+  }
+  .dynamic-mt{
+    margin-right: 1rem;
+  }
+}
+
+.counter-btn{
+  border-radius:.2rem;
+  background: rgb(247, 247, 247);
+}
+
+.selected{
+  background: rgba(162, 162, 255, 0.664);
+}
+.selected-light{
+  background: rgba(222, 222, 255, 0.692);
+  box-shadow: 0 0 0 1px rgb(129, 129, 255);
+}
+img{
+  width:30px;
+  height: 30px;
+}
+.smol{
+  width:10px;
+  height: 10px;
+}
+.smol-2{
+  width:25px;
+  height: 25px;
+}
+.label{
+  font-size: .7rem;
+  font-weight: bold;
+}
+.plus,.minus{
+  align-self:center;
+}
+.test{
+  line-height: 1.1;
 }
 </style>
 

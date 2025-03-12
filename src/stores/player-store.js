@@ -4,8 +4,8 @@ import { LocalStorage } from 'quasar'
 
 export const usePlayerStore = defineStore('player', () => {
   
-  const numPlayers = ref(3);
-  const layout = ref('three');
+  const numPlayers = ref(6);
+  const layout = ref('six-alt');
   const monarch_id = ref(0);
   const init_id = ref(0);
   const life = ref(40);
@@ -14,7 +14,7 @@ export const usePlayerStore = defineStore('player', () => {
     {
       id: 1,
       name: 'Christopher',
-      life: 400,
+      life: 40000,
       background: '#DB877D',
       text_color: 'black',
       text_shadow: false,
