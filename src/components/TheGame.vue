@@ -1,5 +1,12 @@
 <template>
   <div class="lay gap rel" :class="playerStore.layout">
+    <div 
+      class="settings flex-c-c" 
+      :style="useSettingsIcon(playerStore.layout)" 
+      @click="settings_open = true"
+    >
+      <img src="../assets/d20.png" alt="">
+    </div>
     <div
       v-for="(player,index) in playerStore.actualPlayers" :key="index"
       class="grid-50-50 rel secondary "
@@ -12,12 +19,16 @@
       
       <div 
         class="fs-200 names" 
-        @click="profile_open = index" 
+        @click="profile_open = index"
+        v-if="settingsStore.showNames" 
       >
-        {{player.name}}
-        
+        {{player.name}}  
       </div>
-      <div class="grid-c" @pointerdown="resetDelay(index, minusLife)" @pointerup="stopIncrement(index)" @pointerleave="stopIncrement(index)">
+      <div v-else-if="settingsStore.showSettings" class="settings-icon" @click="profile_open = index">
+        <img  src="../assets/settings.png" alt="">
+      </div>
+      
+      <div class="grid-c" @touchstart="resetDelay(index, minusLife)" @touchend="stopIncrement(index)">
         <img class="life-icon minus-life" src="../assets/minus.svg" alt="">
       </div>
       
@@ -41,9 +52,10 @@
 
       <div class="bot-container pe-none" >
         <div></div>
-        <CommanderDamage  
+        <CommanderDamage v-if="settingsStore.showGrid" 
           class="cmd-dmg" :propIndex="index" @click="cmd_dmg_open = index" 
         />
+        <div v-else></div>
         <div class="box" @click="counters_open = index" v-if="Object.keys(playerStore.players[index].counters).length !== 0">
           <template v-for="(val, key) in playerStore.players[index].counters">
             <div class="test-grid" v-if="val > 0">
@@ -52,15 +64,6 @@
             </div>
           </template>
         </div>
-      </div>
-
-
-      <div 
-        class="settings" 
-        :style="useSettingsIcon(playerStore.layout)" 
-        v-if="index === 1"
-        @click="settings_open = true"
-      >
       </div>
 
       <div class="status" >
@@ -90,8 +93,9 @@
 </template>
 
 <script setup>
-import {ref, computed, onMounted} from 'vue'
+import {ref} from 'vue'
 import { usePlayerStore } from 'src/stores/player-store';
+import { useSettingsStore } from 'src/stores/settings-store'
 import { useGetClass }  from 'src/use/useGetClass'
 import { useSettingsIcon } from 'src/use/useGetStyle'
 import CommanderDamage from './CommanderDamage.vue';
@@ -110,6 +114,7 @@ import speedIcon from '../assets/speed.png'
 import Monarch from '../assets/crown.png'
 import Initiative from '../assets/initiative.png'
 const playerStore = usePlayerStore();
+const settingsStore = useSettingsStore();
 const counters = { 
   'Poison': poisonIcon,
   'Tax': taxIcon,
@@ -210,13 +215,19 @@ function chooseRandomPlayer(){
   display:flex;
 }
 .settings{
-  width: 22px;
+  width: 27px;
   aspect-ratio: 1;
   position:absolute;
   border-radius: 50%;
-  background:black;
+  background:rgb(255, 255, 255);
   z-index: 98;
+  box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.123);
   cursor: pointer;
+  img{
+    width: 90%;
+    height: 90%;
+    
+  }
 }
 .test-img{
   position:absolute;
@@ -270,6 +281,17 @@ function chooseRandomPlayer(){
 .cmd-dmg{
   pointer-events: auto;
 }
+.settings-icon{
+  position:absolute;
+  background: rgba(56, 56, 56, 0.226);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  img{
+    width: 100%;
+    height: 100%;
+  }
+}
 .hor-text{
   .bot-container{
     position:absolute;
@@ -278,13 +300,18 @@ function chooseRandomPlayer(){
     width: 100%;
     display:grid;
     grid-template-columns: 1fr 27% 1fr;
-
+   
   }
   .names{
     background:white;
     padding: 0 1rem;
     border-radius: 1rem;
     position:absolute;
+    top:5px;
+    left:50%;
+    transform:translate(-50%, 0);
+  }
+  .settings-icon{
     top:5px;
     left:50%;
     transform:translate(-50%, 0);
@@ -300,6 +327,8 @@ function chooseRandomPlayer(){
     height: min(100%, 60px);
     padding: .1rem 3%;
     justify-self: end;
+    margin-right: .2rem;
+    align-self: end;
     .test-grid{
       width: 20px;
     }
@@ -313,7 +342,6 @@ function chooseRandomPlayer(){
   .cmd-dmg{
     width: 100%;
     height:100%;
-    
     bottom:2px;
   }
   .options-btn{
@@ -357,6 +385,11 @@ function chooseRandomPlayer(){
     top:50%;
     transform: translate(0, -50%);
   }
+  .settings-icon{
+    right:5px;
+    top:50%;
+    transform:translate(0, -50%);
+  }
   .counter{
     top: 50%;
     right: 22%;
@@ -366,7 +399,8 @@ function chooseRandomPlayer(){
     justify-self: end;
     width: min(100%, 60px);
     padding: 3% .1rem;
-
+    margin-bottom: .2rem;
+    align-self: end;
     .test-grid{
       height: 20px;
     }
@@ -410,10 +444,17 @@ function chooseRandomPlayer(){
   }
 }
 
-.five, .five-alt, .six, .six-alt{
+.five, .five-alt, .six{
   .vertical-text{
     .bot-container{
-      grid-template-columns: 1fr 35% 1fr;
+      grid-template-columns: 1fr 40% 1fr;
+    }
+  }
+}
+.six-alt{
+  .vertical-text{
+    .bot-container{
+      grid-template-columns: 1fr 45% 1fr;
     }
   }
 }

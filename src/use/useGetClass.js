@@ -321,8 +321,7 @@ export function useCmdDmgBigLayout(i, layout, propIndex){
   if(layout === 'six'){
     return [
       {'rotate-180': propIndex === 1 || propIndex === 3 || propIndex === 5},
-      'vertical-text', 
-      'column'
+      'vertical-text',  
     ]
   }
 
@@ -331,8 +330,8 @@ export function useCmdDmgBigLayout(i, layout, propIndex){
       {'rotate-180': propIndex === 0 || propIndex === 2 || propIndex === 4},
       (propIndex === 1 || propIndex === 2 || propIndex === 3 || propIndex === 4) ? 'vertical-text' : 'hor-text',
       {'span-2': i === 0 || i === 5},
-      {'column': ((propIndex !== 5 && propIndex !== 0) || ((propIndex === 5 || propIndex === 0) && (i !== 5 && i !== 0))) 
-      }
+      // {'column': ((propIndex !== 5 && propIndex !== 0) || ((propIndex === 5 || propIndex === 0) && (i !== 5 && i !== 0)))},
+      {'column': propIndex !== 5 && propIndex !== 0 && (i === 5 || i === 0)}
 
     ]
   }

@@ -3,8 +3,15 @@
     <div class="inner" @click.stop :class="useCounterClass(propIndex, playerStore.layout)">
       <div class="container flex column" >
         <div class="flex ac column gap">
-          <input class="text-center name-change" type="text" v-model="form.name">
-
+          <input 
+            class="text-center name-change" 
+            type="text" 
+            v-model="form.name"
+            minlength="1"
+            maxlength="15"
+            @keyup.enter="updateProfile"
+          >
+          <p v-if="err">{{ err }}</p>
           <div class="flex jc gap wrap colors">
             <button 
               v-for="color in color_ops" :key="color"
@@ -51,7 +58,7 @@
           <div class="label">Initiative</div>
         </button>
       </div>
-      <br>
+      
       <div class="flex jc gap">
 
         <div 
@@ -129,9 +136,13 @@ const form = ref({
 })
 
 
-
+let err = ref(null);
 function updateProfile(){
   let snap = form.value;
+  if(snap.name.length <= 0){
+    err.value = 'Name Must Exist';
+    return;
+  }
   playerStore.updateProfile(props.propIndex, snap.name, snap.bgcolor, snap.tc, snap.ts);
   emit('save');
 }
@@ -233,7 +244,7 @@ input:focus{
 
   .counter-grid{
     width: 30%;
-    max-width: 70px;
+    max-width: 80px;
     height: 60px;
   }
   .num{
@@ -259,7 +270,7 @@ input:focus{
 
   .counter-grid{
     height: 30%;
-    max-height: 60px;
+    max-height: 80px;
     width: 60px;
   }
   img{

@@ -1,14 +1,16 @@
 export function useSettingsIcon(layout){
   if(layout === 'four'){
     return {
-      right: '-8.76px',
-      top: '-8.74px'
+      left: '50%',
+      top: '50%',
+      transform: 'translate(-50%, -50%)'
     }
   }
   if(layout === 'four-alt'){
     return {
-      right: '-8.76px',
-      bottom: '-8.74px'
+      top: 'calc(73% - 9px)',
+      left: '50%',
+      transform: 'translate(-50%, 0)'
     }
   }
   if(layout === 'two'){
@@ -19,32 +21,37 @@ export function useSettingsIcon(layout){
   }
   if(layout === 'three'){
     return {
-      right: '-8.76px',
-      bottom: '-8.74px'
+      top: 'calc(65% - 12px)',
+      left: '50%',
+      transform: 'translate(-50%, 0)'
     }
   }
   if(layout === 'five'){
     return {
-      right: '-8.76px',
-      bottom: '-8.74px'
+      top: 'calc(71% - 14px)',
+      left: '50%',
+      transform: 'translate(-50%, 0)'
     }
   }
   if(layout === 'five-alt'){
     return {
-      right: '-8.76px',
-      bottom: '-8.74px'
+      top: 'calc(50%)',
+      left: '50%',
+      transform: 'translate(-80%, -50%)'
     }
   }
   if(layout === 'six'){
     return {
-      right: '-8.76px',
-      bottom: '-8.74px'
+      top: 'calc(66% - 10px)',
+      left: '50%',
+      transform: 'translate(-50%, 0)'
     }
   }
   if(layout === 'six-alt'){
     return {
-      right: '-8.76px',
-      bottom: '-8.74px'
+      left: '50%',
+      top: '50%',
+      transform: 'translate(-50%, -50%)'
     }
   }
 }

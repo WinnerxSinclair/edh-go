@@ -7,8 +7,12 @@
       
     >
       
-      <div class="names flex-c-c gap">{{player.name}} 
-        <input v-if="index === propIndex" type="checkbox" @change="partnerFunc(index)" :checked="playerStore.actualPlayers[propIndex].dmg[index].length === 2">
+      <div @click="partnerFunc(index)" class="names flex-c-c gap">{{player.name}}
+        <div v-if="index === propIndex" class="flex-c-c">
+          <img v-if="playerStore.actualPlayers[propIndex].dmg[index].length === 1" src="../assets/person.png" alt="">
+          <img v-else src="../assets/people.png" alt="">
+        </div>
+        <!-- <input v-if="index === propIndex" type="checkbox" @change="partnerFunc(index)" :checked="playerStore.actualPlayers[propIndex].dmg[index].length === 2"> -->
       </div>
 
       
@@ -25,7 +29,7 @@
           v-if="count[index][i]"
           class="abs counter"
         >
-        {{`${count[index][i] < 0 ? '-' : '+'} ${Math.abs(count[index][i])}`}}   
+          {{`${count[index][i] < 0 ? '-' : '+'} ${Math.abs(count[index][i])}`}}   
         </div>
 
         <div class="grid-c" @click="addCmdDmg(index, i)">
@@ -116,6 +120,11 @@ function xd(i) {
 .names{
   font-size: 1rem;
   z-index: 99;
+  div{
+    img{
+      width: 15px;
+    }
+  }
 }
 
 .box{
@@ -176,6 +185,11 @@ function xd(i) {
     top:50%;
     transform: translate(0, -50%);
     white-space:nowrap;
+    div{
+      img{
+        transform: rotate(90deg);
+      }
+    }
   }
   .counter{
     top: 50%;

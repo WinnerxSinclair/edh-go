@@ -4,79 +4,94 @@ import { LocalStorage } from 'quasar'
 
 export const usePlayerStore = defineStore('player', () => {
   
-  const numPlayers = ref(6);
-  const layout = ref('six-alt');
+
   const monarch_id = ref(0);
   const init_id = ref(0);
-  const life = ref(40);
-  
+  const storedLife = LocalStorage.getItem('life');
+  const life = ref(storedLife ? storedLife : 40);
+
   const defaultPlayers = [
     {
       id: 1,
       name: 'Christopher',
-      life: 40000,
+      life: life.value,
       background: '#DB877D',
       text_color: 'black',
       text_shadow: false,
       counters: {},
-      monarch: false,
       dmg: [],
+      dead: false,
     },
     {
       id: 2,
       name: 'Christopher',
-      life: 40,
+      life: life.value,
       background: '#A3DB7D',
       text_color: 'black',
       text_shadow: false,
       counters: {},
       dmg: [],
+      dead: false,
     },
     {
       id: 3,
       name: 'Christopher',
-      life: 40,
+      life: life.value,
       background: '#93D9E1',
       text_color: 'black',
       text_shadow: false,
       counters: {},
       dmg: [],
+      dead: false,
     },
     {
       id: 4,
       name: 'Christopher',
-      life: 40,
+      life: life.value,
       background: '#B57DDB',
       text_color: 'black',
       text_shadow: false,
       counters: {},
       dmg: [],
+      dead: false,
     },
     {
       id: 5,
       name: 'Christopher',
-      life: 40,
+      life: life.value,
       background: '#DBB57D',
       text_color: 'black',
       text_shadow: false,
       counters: {},
       dmg: [],
+      dead: false,
     },
     {
       id: 6,
       name: 'Christopher',
-      life: 40,
+      life: life.value,
       background: '#C8C6C9',
       text_color: 'black',
       text_shadow: false,
       counters: {},
       dmg: [],
+      dead: false,
     },
   ]
 
 
   const storedPlayers = LocalStorage.getItem('players');
-  
+  const storedLayout = LocalStorage.getItem('layout');
+  const storedNumPlayers = LocalStorage.getItem('numPlayers');
+
+  const storedAutoKO = LocalStorage.getItem('autoKO');
+  const storedCmdLife = LocalStorage.getItem('cmdLife');
+
+  const autoKO = ref(storedAutoKO ? storedAutoKO : true);
+
+  const cmdLife = ref(storedCmdLife ? storedCmdLife : true);
+  const numPlayers = ref(storedNumPlayers ? storedNumPlayers : 4);
+  const layout = ref(storedLayout ? storedLayout : 'four');
   const players = ref(storedPlayers ? storedPlayers : defaultPlayers);
   const actualPlayers = computed(() => {
     return players.value.slice(0, numPlayers.value);
@@ -114,20 +129,35 @@ export const usePlayerStore = defineStore('player', () => {
     players.value.forEach((el, i) => {
       el.dmg = [...new Array(numPlayers.value)].map(_ => new Array(1).fill(0));
     })
+    
   }, {immediate: true})
 
   function addLife(i){
     actualPlayers.value[i].life++;
+    if(autoKO.value && actualPlayers.value[i].life > 0 && actualPlayers.value[i].dead === true){
+      actualPlayers.value[i].dead = false;
+    }
   }
   function minusLife(i){
     actualPlayers.value[i].life--;
+    if(autoKO.value && actualPlayers.value[i].life <= 0){
+      actualPlayers.value[i].dead = true;
+    }
   }
 
-  function addCmdDmg(playerIndex, cmd_dmg_index, partner_index){
-    actualPlayers.value[cmd_dmg_index].dmg[playerIndex][partner_index]++;
+  function addCmdDmg(cmd_dmg_index, playerIndex, partner_index){
+    actualPlayers.value[playerIndex].dmg[cmd_dmg_index][partner_index]++;
+    if(cmdLife.value) minusLife(playerIndex);
+    if(autoKO.value && actualPlayers.value[playerIndex].dmg[cmd_dmg_index][partner_index] >= 21 && !actualPlayers.value[playerIndex].dead){
+      actualPlayers.value[playerIndex].dead = true;
+    }
   }
-  function minusCmdDmg(playerIndex, cmd_dmg_index, partner_index){
-    actualPlayers.value[cmd_dmg_index].dmg[playerIndex][partner_index]--;
+  function minusCmdDmg(cmd_dmg_index, playerIndex, partner_index){
+    actualPlayers.value[playerIndex].dmg[cmd_dmg_index][partner_index]--;
+    if(cmdLife.value) addLife(playerIndex);
+    if(actualPlayers.value[playerIndex].dmg[cmd_dmg_index][partner_index] < 21 && actualPlayers.value[playerIndex].dead){
+      actualPlayers.value[playerIndex].dead = false;
+    }
   }
 
   function partnerFunc(cmd_dmg_index){
@@ -144,12 +174,18 @@ export const usePlayerStore = defineStore('player', () => {
     }else{
       actualPlayers.value[playerIndex].counters[key]++;
     }
+    if(autoKO.value && key === 'Poison' && actualPlayers.value[playerIndex].counters[key] >= 10){
+      actualPlayers.value[playerIndex].dead = true;
+    }
   }
   function minusCounter(key, playerIndex){
     if(!(key in actualPlayers.value[playerIndex].counters)) return;
     actualPlayers.value[playerIndex].counters[key]--;
     if(actualPlayers.value[playerIndex].counters[key] === 0){
       delete actualPlayers.value[playerIndex].counters[key]
+    }
+    if(autoKO.value && key === 'Poison' && actualPlayers.value[playerIndex].counters[key] < 10){
+      actualPlayers.value[playerIndex].dead = false;
     }
   }
 
@@ -160,11 +196,14 @@ export const usePlayerStore = defineStore('player', () => {
     else if(num === 5) layout.value = 'five';
     else if(num === 6) layout.value = 'six';
     else if(num === 2) layout.value = 'two';
+    LocalStorage.set('numPlayers', numPlayers.value)
+    LocalStorage.set('layout', layout.value);
   }
 
   const layoutArr = [0,0,0,0,['four','four-alt'],['five','five-alt'],['six','six-alt']]
   function changeLayout(num){
     layout.value = layoutArr[numPlayers.value][num];
+    LocalStorage.set('layout', layout.value);
   }
 
   const colors = ['#DB877D', '#A3DB7D', '#93D9E1', '#B57DDB', '#DBB57D', '#C8C6C9', '#7590ba', '#db7dd2', '#d97ed4'];
@@ -190,16 +229,31 @@ export const usePlayerStore = defineStore('player', () => {
   }
 
 
+  function changeStartingLife(l){
+    life.value = l;
+    LocalStorage.set('life', life.value);
+    resetGame();
+  }
+
   function resetGame(){
     monarch_id.value = 0;
     init_id.value = 0;
     players.value.forEach((player) => {
       player.life = life.value;
       player.counters = {};
+      player.dead = false;
       player.dmg.forEach((el, i) => {
         player.dmg[i] = [0];
       })
     })
+  }
+
+  function updateAutoKO(){
+    LocalStorage.set('autoKO', autoKO.value);
+  }
+
+  function updateCmdLife(){
+    LocalStorage.set('cmdLife', cmdLife.value );
   }
 
 
@@ -211,6 +265,10 @@ export const usePlayerStore = defineStore('player', () => {
     monarch_id,
     init_id,
     actualPlayers,
+    life,
+    autoKO,
+    cmdLife,
+
 
     addLife, 
     minusLife,
@@ -221,10 +279,14 @@ export const usePlayerStore = defineStore('player', () => {
     partnerFunc,
     changePlayers,
     changeLayout,
+    changeStartingLife,
  
 
     updateProfile,
-    resetGame
+    resetGame,
+    updateAutoKO,
+    updateCmdLife
+
   
   }
 })
