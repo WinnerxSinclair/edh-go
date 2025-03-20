@@ -1,6 +1,6 @@
 <template>
-  <div class="outer" @click="updateProfile">
-    <div class="inner" @click.stop :class="useCounterClass(propIndex, playerStore.layout)">
+  <div class="outer" @click="updateProfile" :class="useCounterClass(propIndex, playerStore.layout)">
+    <div class="inner" @click.stop >
       <div class="container flex column" >
         <div class="flex ac column gap">
           <input 
@@ -23,63 +23,58 @@
             </button>
           </div>
 
-          <!-- <div>----Text Color----</div>
-          <div class="flex-c-c gap">
-            <button v-for="op in options.tc" :key="op" @click="form.tc = op" :class="{'btn-bg': form.tc === op}">{{ op }}</button>
-          </div>
-
-          <div>----Text Shadow----</div>
-          <div class="flex-c-c gap">
-            <button v-for="op in options.ts" :key="op" @click="form.ts = op" :class="{'btn-bg': form.ts === op}">{{ op }}</button>
-          </div>
-
-          <button @click="updateProfile">Save</button>
-          <button @click="$emit('save')">Cancel</button> -->
-
-
 
           <div class="flex jc gap">
-        <button class="counter-btn"
-          :class="{'selected-light': playerStore.monarch_id === playerStore.players[propIndex].id }" 
-          @click="playerStore.monarch_id = playerStore.monarch_id === playerStore.players[propIndex].id ? 0 : playerStore.players[propIndex].id"
-        >
-          <img src="../assets/crown.png" alt="" >
-          <div class="label">Monarch</div>
-        </button>
-        <button class="counter-btn">
-          <img src="../assets/ascend.png" alt="">
-          <div class="label">Ascend</div>
-        </button>
-        <button class="counter-btn"
-          :class="{'selected-light': playerStore.init_id === playerStore.players[propIndex].id }" 
-          @click="playerStore.init_id = playerStore.init_id === playerStore.players[propIndex].id ? 0 : playerStore.players[propIndex].id"
-        >
-          <img src="../assets/initiative.png" alt="">
-          <div class="label">Initiative</div>
-        </button>
-      </div>
+            <button class="counter-btn"
+              :class="{'selected-light': playerStore.monarch_id === playerStore.players[propIndex].id }" 
+              @click="playerStore.monarch_id = playerStore.monarch_id === playerStore.players[propIndex].id ? 0 : playerStore.players[propIndex].id"
+            >
+              <img src="../assets/crown.png" alt="" >
+              <div class="label">Monarch</div>
+            </button>
+            <button class="counter-btn"
+              @click="playerStore.players[propIndex].ascended = !playerStore.players[propIndex].ascended"
+              :class="{'selected-light': playerStore.players[propIndex].ascended }"
+            >
+              <img src="../assets/ascend.webp" alt="">
+              <div class="label">Ascend</div>
+            </button>
+            <button class="counter-btn"
+              :class="{'selected-light': playerStore.init_id === playerStore.players[propIndex].id }" 
+              @click="playerStore.init_id = playerStore.init_id === playerStore.players[propIndex].id ? 0 : playerStore.players[propIndex].id"
+            >
+              <img src="../assets/initiative.png" alt="">
+              <div class="label">Initiative</div>
+            </button>
+            <button 
+            class="counter-btn"
+            :class="{'selected-light': playerStore.actualPlayers[propIndex].dead }" 
+            @click="playerStore.actualPlayers[propIndex].dead = !playerStore.actualPlayers[propIndex].dead"
+            >
+              <img src="../assets/KO.png" alt="">
+              <div class="label">KO</div>
+            </button>
+          </div>
       
-      <div class="flex jc gap">
-
-        <div 
-          class="counter-grid bold rel"
-          :class="{'selected-light': playerStore.players[propIndex].counters[key] }" 
-          v-for="(val, key) in counters" :key="key"
-        >
-          <img class="smol minus" src="../assets/minus.svg" alt="">
-          <div class="test">
-            <img class="smol-2" :src="val" alt="">
-            <div class="fs-100">{{ key }}</div>
-            <div class="fs-100 num">{{ playerStore.players[propIndex].counters[key] || 0 }}</div>
+          <div class="flex jc gap">
+            <div 
+              class="counter-grid bold rel"
+              :class="{'selected-light': playerStore.players[propIndex].counters[key] }" 
+              v-for="(val, key) in counters" :key="key"
+            >
+              <img class="smol minus" src="../assets/minus.svg" alt="">
+              <div class="test">
+                <img class="smol-2" :src="val" alt="">
+                <div class="fs-100">{{ key }}</div>
+                <div class="fs-100 num">{{ playerStore.players[propIndex].counters[key] || 0 }}</div>
+              </div>
+              <img class="smol plus" src="../assets/plus.svg" alt="">
+              <div class="overlay">
+                <button @click="minusCounter(key)"></button>
+                <button @click="addCounter(key)"></button>
+              </div>
+            </div>         
           </div>
-          <img class="smol plus" src="../assets/plus.svg" alt="">
-          <div class="overlay">
-            <button @click="minusCounter(key)"></button>
-            <button @click="addCounter(key)"></button>
-          </div>
-        </div>
-        
-      </div>
         </div> 
       </div>
     </div>
@@ -122,11 +117,7 @@ function minusCounter(key){
   playerStore.minusCounter(key, props.propIndex);
 }
 const emit = defineEmits(['save'])
-const options = {
-  bg: ['Color'],
-  tc: ['white','black'],
-  ts: ['No', 'Yes']
-}
+
 const color_ops = ['#DB877D', '#A3DB7D', '#93D9E1', '#B57DDB', '#DBB57D', '#C8C6C9', '#7590ba', '#dbdb7d', '#db7dd2', '#d7b9ec'];
 const form = ref({
   name: playerStore.players[props.propIndex].name,
@@ -235,7 +226,7 @@ input:focus{
 }
 
 .hor-text{
-  &.inner{
+  .inner{
     width: 90%;
   }
   .container{
@@ -257,7 +248,7 @@ input:focus{
 
 .vertical-text {
   writing-mode: vertical-rl;
-  &.inner{
+  .inner{
     max-height: 90%;
   }
   .container{

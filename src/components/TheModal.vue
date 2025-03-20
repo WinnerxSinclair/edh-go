@@ -1,12 +1,19 @@
 <template>
   <div class="outer" @click="$emit('closeModal')">
-    <div class="inner" @click.stop>
+    <div :class="[inner ? 'inner-alt' : 'inner']" @click.stop>
       <slot />
     </div>
   </div>
 </template>
 
-
+<script setup>
+const props = defineProps({
+  inner: {
+    type: Boolean,
+    required: false
+  }
+})
+</script>
 <style lang="scss" scoped>
 .outer{
   inset: 0;
@@ -22,5 +29,12 @@
 .inner{
   width: 90%;
   height: 85%;
+}
+.inner-alt{
+  width: 90%;
+  max-height: 85%;
+  overflow: scroll;
+  border-radius: 1rem;
+  
 }
 </style>

@@ -116,8 +116,8 @@
         <input type="checkbox" v-model="playerStore.cmdLife" @change="playerStore.updateCmdLife()">
       </div>
     </div>
-
-    <div class="pad flex ac column gap storm fs-600 bold" v-else>
+    
+    <div class="pad flex ac column gap storm fs-600 bold" v-if="setting_type === 'Storm'">
       <div class="flex ac gap" v-for="(color, i) in stormArr" :key="color">
         <button class="mr-4" @click="settingsStore.storm[i]--">
           <img src="../assets/minus.svg" alt="">
@@ -133,8 +133,6 @@
         <button @click="setting_type = 'Game'">Settings</button>
       </div>
     </div>
-
-
   </div>
 </template>
 
@@ -257,7 +255,7 @@ button{
   height: 100%;
   background: rgb(224, 224, 224);
   text-align: center;
-  border-radius: 1rem;
+ 
   overflow: scroll;
 }
 
@@ -309,4 +307,6 @@ button{
     }
   }
 }
+
+
 </style>

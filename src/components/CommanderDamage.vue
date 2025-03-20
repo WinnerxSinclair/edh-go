@@ -31,7 +31,7 @@ const props = defineProps({
 
 <style lang="scss" scoped>
 .fs-sm{
-  font-size:.8rem;
+  font-size:calc(.3rem + 1vmax);
   font-weight:bold;
 }
 

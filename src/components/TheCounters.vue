@@ -6,22 +6,31 @@
           
           <div class="flex jc gap">
             <button class="counter-btn"
-              :class="{'selected': playerStore.monarch_id === playerStore.players[propIndex].id }" 
+              :class="{'selected-light': playerStore.monarch_id === playerStore.players[propIndex].id }" 
               @click="playerStore.monarch_id = playerStore.monarch_id === playerStore.players[propIndex].id ? 0 : playerStore.players[propIndex].id"
             >
               <img src="../assets/crown.png" alt="" >
               <div class="label">Monarch</div>
             </button>
-            <button class="counter-btn">
-              <img src="../assets/ascend.png" alt="">
+            <button class="counter-btn" @click="playerStore.players[propIndex].ascended = !playerStore.players[propIndex].ascended"
+              :class="{'selected-light': playerStore.players[propIndex].ascended }"
+            >
+              <img src="../assets/ascend.webp" alt="">
               <div class="label">Ascend</div>
             </button>
             <button class="counter-btn"
-              :class="{'selected': playerStore.init_id === playerStore.players[propIndex].id }" 
+              :class="{'selected-light': playerStore.init_id === playerStore.players[propIndex].id }" 
               @click="playerStore.init_id = playerStore.init_id === playerStore.players[propIndex].id ? 0 : playerStore.players[propIndex].id"
             >
               <img src="../assets/initiative.png" alt="">
               <div class="label">Initiative</div>
+            </button>
+            <button class="counter-btn"
+              :class="{'selected-light': playerStore.actualPlayers[propIndex].dead }" 
+              @click="playerStore.actualPlayers[propIndex].dead = !playerStore.actualPlayers[propIndex].dead"
+            >
+              <img src="../assets/KO.png" alt="">
+              <div class="label">KO</div>
             </button>
           </div>
           <br>
@@ -43,14 +52,13 @@
                 <button @click="minusCounter(key)"></button>
                 <button @click="addCounter(key)"></button>
               </div>
-            </div>
-            
-          </div>
-          
+            </div> 
+          </div> 
         </div>
       </div>
     </div>
   </div>
+
 </template>
 
 <script setup>
@@ -63,11 +71,12 @@ import energyIcon from '../assets/energy.png'
 import speedIcon from '../assets/speed.png'
 import { usePlayerStore } from 'src/stores/player-store';
 import { useCounterClass } from 'src/use/useGetClass';
+
 const props = defineProps({
   propIndex: {
     type: Number,
     required: true
-  }
+  },
 })
 const playerStore = usePlayerStore();
 
@@ -89,6 +98,7 @@ function minusCounter(key){
 
 </script>
 <style lang="scss" scoped>
+
 .outer{
   inset: 0;
   background:rgba(0, 0, 0, 0.705);

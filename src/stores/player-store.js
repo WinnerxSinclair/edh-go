@@ -13,69 +13,63 @@ export const usePlayerStore = defineStore('player', () => {
   const defaultPlayers = [
     {
       id: 1,
-      name: 'Christopher',
+      name: 'Player 1',
       life: life.value,
       background: '#DB877D',
-      text_color: 'black',
-      text_shadow: false,
       counters: {},
       dmg: [],
       dead: false,
+      ascended: false,
     },
     {
       id: 2,
-      name: 'Christopher',
+      name: 'Player 2',
       life: life.value,
       background: '#A3DB7D',
-      text_color: 'black',
-      text_shadow: false,
       counters: {},
       dmg: [],
       dead: false,
+      ascended: false,
     },
     {
       id: 3,
-      name: 'Christopher',
+      name: 'Player 3',
       life: life.value,
       background: '#93D9E1',
-      text_color: 'black',
-      text_shadow: false,
       counters: {},
       dmg: [],
       dead: false,
+      ascended: false,
     },
     {
       id: 4,
-      name: 'Christopher',
+      name: 'Player 4',
       life: life.value,
       background: '#B57DDB',
-      text_color: 'black',
-      text_shadow: false,
       counters: {},
       dmg: [],
       dead: false,
+      ascended: false,
     },
     {
       id: 5,
-      name: 'Christopher',
+      name: 'Player 5',
       life: life.value,
       background: '#DBB57D',
-      text_color: 'black',
-      text_shadow: false,
       counters: {},
       dmg: [],
       dead: false,
+      ascended: false,
     },
     {
       id: 6,
-      name: 'Christopher',
+      name: 'Player 6',
       life: life.value,
       background: '#C8C6C9',
-      text_color: 'black',
-      text_shadow: false,
       counters: {},
       dmg: [],
       dead: false,
+      ascended: false,
     },
   ]
 
@@ -87,9 +81,9 @@ export const usePlayerStore = defineStore('player', () => {
   const storedAutoKO = LocalStorage.getItem('autoKO');
   const storedCmdLife = LocalStorage.getItem('cmdLife');
 
-  const autoKO = ref(storedAutoKO ? storedAutoKO : true);
+  const autoKO = ref(storedAutoKO ?? true);
 
-  const cmdLife = ref(storedCmdLife ? storedCmdLife : true);
+  const cmdLife = ref(storedCmdLife ?? true);
   const numPlayers = ref(storedNumPlayers ? storedNumPlayers : 4);
   const layout = ref(storedLayout ? storedLayout : 'four');
   const players = ref(storedPlayers ? storedPlayers : defaultPlayers);
@@ -134,7 +128,7 @@ export const usePlayerStore = defineStore('player', () => {
 
   function addLife(i){
     actualPlayers.value[i].life++;
-    if(autoKO.value && actualPlayers.value[i].life > 0 && actualPlayers.value[i].dead === true){
+    if(autoKO.value && actualPlayers.value[i].life-1 === 0 && actualPlayers.value[i].dead === true){
       actualPlayers.value[i].dead = false;
     }
   }
@@ -242,6 +236,7 @@ export const usePlayerStore = defineStore('player', () => {
       player.life = life.value;
       player.counters = {};
       player.dead = false;
+      player.ascended = false;
       player.dmg.forEach((el, i) => {
         player.dmg[i] = [0];
       })

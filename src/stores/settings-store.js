@@ -7,9 +7,9 @@ export const useSettingsStore = defineStore('settings', () => {
     const storedShowGrid = LocalStorage.getItem('showgrid');
     const storedShowSettings = LocalStorage.getItem('showsettings')
 
-    const showNames = ref(storedShowNames ? storedShowNames : true);
-    const showGrid = ref(storedShowGrid ? storedShowGrid : true);
-    const showSettings = ref(storedShowSettings ? storedShowSettings : true);
+    const showNames = ref(storedShowNames ?? true);
+    const showGrid = ref(storedShowGrid ?? true);
+    const showSettings = ref(storedShowSettings ?? true);
 
     function updateShowGrids(){
       LocalStorage.set('showgrid', showGrid.value);

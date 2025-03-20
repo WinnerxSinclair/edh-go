@@ -9,23 +9,27 @@
     </div>
     <div
       v-for="(player,index) in playerStore.actualPlayers" :key="index"
-      class="grid-50-50 rel secondary "
-      :class="[useGetClass(index, playerStore.layout), {'chosen': index === chosenPlayer}]"
+      class="grid-50-50 rel secondary"
+      :class="[useGetClass(index, playerStore.layout), {'chosen': index === chosenPlayer}, {'dead': player.dead}]"
       :style="[
                {background: player.background},
-               {color: player.text_color},
               ]"
     >
-      
-      <div 
-        class="fs-200 names" 
-        @click="profile_open = index"
-        v-if="settingsStore.showNames" 
-      >
-        {{player.name}}  
-      </div>
-      <div v-else-if="settingsStore.showSettings" class="settings-icon" @click="profile_open = index">
-        <img  src="../assets/settings.png" alt="">
+  
+      <div class="top-row flex ac gap-0" :style="settingsStore.showNames ? { background: 'white'} : {}">
+        <img v-if="player.ascended" src="../assets/ascend.webp" alt="">
+        <div 
+          class="fs-200 names" 
+          @click="profile_open = index"
+          v-if="settingsStore.showNames" 
+        >
+          {{player.name}}  
+        </div>
+        <div v-else-if="settingsStore.showSettings" class="settings-icon" @click="profile_open = index">
+          <img  src="../assets/settings.png" alt="">
+        </div>
+        <img v-if="playerStore.monarch_id === player.id" src="../assets/crown.png" alt="">
+        <img v-if="playerStore.init_id === player.id" src="../assets/initiative.png" alt="">
       </div>
       
       <div class="grid-c" @touchstart="resetDelay(index, minusLife)" @touchend="stopIncrement(index)">
@@ -66,28 +70,33 @@
         </div>
       </div>
 
-      <div class="status" >
+      <!-- <div class="status" >
         <img v-if="playerStore.monarch_id" :src="Monarch" :class="{'gray': player.id !== playerStore.monarch_id}" 
           @click="playerStore.monarch_id = playerStore.monarch_id === player.id ? 0 : player.id"
         >
         <img v-if="playerStore.init_id" :src="Initiative" :class="{'gray': player.id !== playerStore.init_id}" 
           @click="playerStore.init_id = playerStore.init_id === player.id ? 0 : player.id"
         >
-      </div>
+      </div> -->
     </div>
+  
     <TheModal v-if="cmd_dmg_open !== null" @closeModal="cmd_dmg_open = null">
       <RealCmdDmg :propIndex="cmd_dmg_open" />
     </TheModal>
-
     
-    <TheCounters v-if="counters_open !== null" :propIndex="counters_open" @closeCounters="counters_open = null" />
+    <TheTransition>
+      <TheCounters v-if="counters_open !== null" :propIndex="counters_open" @closeCounters="counters_open = null" />
+    </TheTransition>
     
-
-    <TheProfile v-if="profile_open !== null" :propIndex="profile_open" @save="profile_open = null" />
+    <TheTransition>
+      <TheProfile v-if="profile_open !== null" :propIndex="profile_open" @save="profile_open = null" />
+    </TheTransition>
     
-    <TheModal v-if="settings_open" @closeModal="settings_open = false">
-      <TheSettings @choose="chooseRandomPlayer" />
-    </TheModal>
+    <TheTransition>
+      <TheModal v-if="settings_open" @closeModal="settings_open = false" :inner="true">
+        <TheSettings @choose="chooseRandomPlayer" />
+      </TheModal>
+    </TheTransition>
 
   </div>
 </template>
@@ -100,6 +109,7 @@ import { useGetClass }  from 'src/use/useGetClass'
 import { useSettingsIcon } from 'src/use/useGetStyle'
 import CommanderDamage from './CommanderDamage.vue';
 import TheModal from './TheModal.vue';
+import TheTransition from './TheTransition.vue';
 import RealCmdDmg from './RealCmdDmg.vue';
 import TheCounters from './TheCounters.vue';
 import TheProfile from './TheProfile.vue';
@@ -111,8 +121,7 @@ import radIcon from '../assets/rad.png'
 import expIcon from '../assets/exp.png'
 import energyIcon from '../assets/energy.png'
 import speedIcon from '../assets/speed.png'
-import Monarch from '../assets/crown.png'
-import Initiative from '../assets/initiative.png'
+
 const playerStore = usePlayerStore();
 const settingsStore = useSettingsStore();
 const counters = { 
@@ -199,13 +208,17 @@ function chooseRandomPlayer(){
 </script>
 
 <style lang="scss" scoped>
-
+.top-row{
+  position:absolute;
+  flex-wrap: nowrap;
+}
 .left-spacer{
   flex: 1 1 auto;
 }
 .chosen{
   animation: flash 1s ease-in-out 3;
 }
+
 @keyframes flash{
   0%, 100% { filter: brightness(1); }
   50% { filter: brightness(1.25); }
@@ -261,6 +274,7 @@ function chooseRandomPlayer(){
 
 .names{
   font-size: 1rem;
+  white-space: nowrap;
 }
 
 .box{
@@ -282,11 +296,13 @@ function chooseRandomPlayer(){
   pointer-events: auto;
 }
 .settings-icon{
-  position:absolute;
   background: rgba(56, 56, 56, 0.226);
   width: 30px;
   height: 30px;
   border-radius: 50%;
+  display:flex;
+  justify-content: center;
+  align-items: center;
   img{
     width: 100%;
     height: 100%;
@@ -302,20 +318,18 @@ function chooseRandomPlayer(){
     grid-template-columns: 1fr 27% 1fr;
    
   }
-  .names{
-    background:white;
-    padding: 0 1rem;
+  .top-row{
+    top:5px;
+    left:50%;
+    transform:translate(-50%, 0);
+    padding: 0 .4rem;
     border-radius: 1rem;
-    position:absolute;
-    top:5px;
-    left:50%;
-    transform:translate(-50%, 0);
+    img{
+      width: 25px;
+      height: 25px;
+    }
   }
-  .settings-icon{
-    top:5px;
-    left:50%;
-    transform:translate(-50%, 0);
-  }
+
   .counter{
     left: 50%;
     top: 22%;
@@ -376,20 +390,20 @@ function chooseRandomPlayer(){
     grid-template-columns: 1fr 27% 1fr;
 
   }
-  .names{
-    background:white;
-    padding: 1rem 0;
-    border-radius: 1rem;
-    position: absolute;
+  .top-row{
     right:5px;
     top:50%;
     transform: translate(0, -50%);
+    border-radius: 1rem;
+    padding: .4rem 0;
+    img{
+      height: 25px;
+      width: 25px;
+      transform:rotate(90deg);
+    }
   }
-  .settings-icon{
-    right:5px;
-    top:50%;
-    transform:translate(0, -50%);
-  }
+
+
   .counter{
     top: 50%;
     right: 22%;
@@ -459,6 +473,9 @@ function chooseRandomPlayer(){
   }
 }
 
+.dead{
+  filter:brightness(10%);
+}
 .gap{
   gap: 2px;
 }

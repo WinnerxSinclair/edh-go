@@ -17,7 +17,7 @@
 
       
       <div class="grid-50-50 flex-1 rel" v-for="(p, i) in playerStore.actualPlayers[propIndex].dmg[index]" :key="i" :style="{background: player.background}">
-        <div class="grid-c" @click="minusCmdDmg(index, i)">
+        <div class="grid-c" @touchstart="minusCmdDmg(index, i)">
           <img class="life-icon minus-life " src="../assets/minus.svg" alt="">
         </div>
         
@@ -32,7 +32,7 @@
           {{`${count[index][i] < 0 ? '-' : '+'} ${Math.abs(count[index][i])}`}}   
         </div>
 
-        <div class="grid-c" @click="addCmdDmg(index, i)">
+        <div class="grid-c" @touchstart="addCmdDmg(index, i)">
           <img class="life-icon plus-life " src="../assets/plus.svg" alt="">
         </div>
       </div>

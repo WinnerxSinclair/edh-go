@@ -15,8 +15,9 @@ export function useSettingsIcon(layout){
   }
   if(layout === 'two'){
     return {
-      right: '-8.76px',
-      bottom: '-8.74px'
+      top: '50%',
+      right: '-3px',
+      transform: 'translate(0, -50%)'
     }
   }
   if(layout === 'three'){
