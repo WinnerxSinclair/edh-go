@@ -6,5 +6,5 @@ MTG life counter for Android. Users can track life, change layouts, track counte
 
 
 ## APK
-[⬇️ Download APK](https://github.com/WinnerxSinclair/edh-go/releases/download/v1.0-beta)
+[⬇️ Download APK](https://github.com/WinnerxSinclair/edh-go/releases/download/v1.0-beta/app-release-aligned.apk)
 
