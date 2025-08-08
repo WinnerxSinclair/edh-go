@@ -115,6 +115,11 @@
         <label>Cmd Dmg Life Loss</label>
         <input type="checkbox" v-model="playerStore.cmdLife" @change="playerStore.updateCmdLife()">
       </div>
+
+      <p class="copyright smol-text">edh-go is not affiliated with, endorsed, or approved by ©Wizards of the Coast LLC</p>
+      <p class="smol-text">Money bag, racetrack flag, radiation, and treasure chest icons by 
+        <a href="https://icons8.com/" target="_blank">Icons8</a> 
+      </p>
     </div>
     
     <div class="pad flex ac column gap storm fs-600 bold" v-if="setting_type === 'Storm'">
@@ -216,7 +221,12 @@ onUnmounted(() => clearInterval(intervalId));
 </script>
 
 <style lang="scss" scoped>
-
+.copyright{
+  margin-top: 5rem;
+}
+.smol-text{
+  font-size: .6rem;
+}
 .footer{
   margin-top: auto;
   width: 100%;

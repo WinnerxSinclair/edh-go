@@ -5,6 +5,7 @@
   "author": "WinnerxSinclair <cobrasuperkek@gmail.com>",
   "private": true,
   "dependencies": {
+    "@capacitor-community/keep-awake": "^7.0.0",
     "@capacitor/android": "^6.2.0",
     "@capacitor/app": "^6.0.0",
     "@capacitor/cli": "^6.0.0",

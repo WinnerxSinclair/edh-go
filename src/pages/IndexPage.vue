@@ -4,9 +4,19 @@
 
 <script setup>
 import TheGame from 'src/components/TheGame.vue';
-import { usePlayerStore } from 'src/stores/player-store';
+import { onMounted } from 'vue'
+import { KeepAwake } from '@capacitor-community/keep-awake';
 
-const playerStore = usePlayerStore();
+onMounted(async () => {
+  try{
+    await KeepAwake.keepAwake();
+    console.log('awake');
+  }catch(err){
+    console.error(err)
+  }
+
+})
+
 </script>
 
 <style lang="scss" scoped>

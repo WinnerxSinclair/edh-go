@@ -242,7 +242,7 @@ export const usePlayerStore = defineStore('player', () => {
       })
     })
   }
-
+  resetGame();
   function updateAutoKO(){
     LocalStorage.set('autoKO', autoKO.value);
   }

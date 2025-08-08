@@ -1,4 +1,4 @@
-package com.edhgo.www;
+package com.edhgo.com;
 
 import com.getcapacitor.BridgeActivity;
 

@@ -32,14 +32,14 @@
         <img v-if="playerStore.init_id === player.id" src="../assets/initiative.png" alt="">
       </div>
       
-      <div class="grid-c" @touchstart="resetDelay(index, minusLife)" @touchend="stopIncrement(index)">
+      <div class="grid-c" @touchstart.prevent="resetDelay(index, minusLife)" @touchend="stopIncrement(index)">
         <img class="life-icon minus-life" src="../assets/minus.svg" alt="">
       </div>
       
       
       <div class="abs-center pe-none" :style="hpSize(player.life)">{{ player.life }}</div>
       
-      <div class="grid-c" @touchstart="resetDelay(index, addLife)" @touchend="stopIncrement(index)" >
+      <div class="grid-c" @touchstart.prevent="resetDelay(index, addLife)" @touchend="stopIncrement(index)" >
         <img class="life-icon plus-life " src="../assets/plus.svg" alt="">
       </div>
       
