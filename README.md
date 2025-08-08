@@ -1,24 +1,10 @@
 # edh go (edh-go)
 
-mtg life counter
+MTG life counter for Android. Users can track life, change layouts, track counters, roll dice, and more.
 
-## Install the dependencies
-```bash
-yarn
-# or
-npm install
-```
-
-### Start the app in development mode (hot-code reloading, error reporting, etc.)
-```bash
-quasar dev
-```
+## Demo
 
 
-### Build the app for production
-```bash
-quasar build
-```
+## APK
+[⬇️ Download APK](https://github.com/WinnerxSinclair/edh-go/releases/download/v1.0-beta/app-release-aligned.apk)
 
-### Customize the configuration
-See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
